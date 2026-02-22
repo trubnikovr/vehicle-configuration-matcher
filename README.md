@@ -22,3 +22,8 @@ $this->app->tag([
    KapitalVehicleCatalogProvider::class,
    InsonVehicleCatalogProvider::class,
 ], 'vehicle.providers');
+
+
+$this->app->when(VehicleSyncService::class)
+    ->needs('$providers')
+    ->giveTagged('vehicle.providers');
