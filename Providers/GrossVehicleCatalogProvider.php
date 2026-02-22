@@ -18,10 +18,15 @@ use App\Services\Vehicles\DTO\VehicleModelDTO;
 
 class GrossVehicleCatalogProvider implements VehicleCatalogProvider
 {
-    const GROSS = 8;
+
     public function __construct(
         private readonly GrossInsuranceService $grossInsuranceService,
     ) {}
+
+    public function key(): int
+    {
+        return 8;
+    }
 
     public function fetchCatalog(): VehicleCatalogDTO
     {
@@ -52,7 +57,7 @@ class GrossVehicleCatalogProvider implements VehicleCatalogProvider
                     $cfgDtos[] = new VehicleConfigDTO(
                         name: join(' ',array_unique([$model->name, $comp->name])),
                         externalId: (string)$comp->id,
-                        companyId: self::GROSS, // твоя константа
+                        companyId: $this->key(), // твоя константа
                         price: null,
                         meta: ['raw' => $comp->toArray()] // опционально
                     );

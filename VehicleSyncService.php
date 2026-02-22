@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace App\Services\Vehicles;
 
 
+use App\Services\Vehicles\Contracts\VehicleCatalogProvider;
 use App\Services\Vehicles\Providers\GrossVehicleCatalogProvider;
 use App\Services\Vehicles\Providers\InsonVehicleCatalogProvider;
 use App\Services\Vehicles\Providers\KapitalVehicleCatalogProvider;
@@ -12,6 +13,8 @@ use Throwable;
 
 final class VehicleSyncService
 {
+    /** @var array<string, VehicleCatalogProvider> */
+    private array $providers;
     public function __construct(
         private readonly NeoVehicleCatalogProvider $neoVehicleCatalogProvider,
         private readonly VehicleCatalogUpserter $upserter,
@@ -19,7 +22,14 @@ final class VehicleSyncService
         private readonly VehicleExternalConfigMapper $vehicleExternalConfigMapper,
         private readonly InsonVehicleCatalogProvider $insonVehicleCatalogProvider,
         private readonly KapitalVehicleCatalogProvider $kapitalVehicleCatalogProvider,
-    ) {}
+    ) {
+
+        $this->providers = [
+            $neoVehicleCatalogProvider,
+            $insonVehicleCatalogProvider,
+            $kapitalVehicleCatalogProvider
+        ];
+    }
 
     public function main(bool $force = false): array
     {
@@ -66,8 +76,6 @@ final class VehicleSyncService
                             continue;
                         }
 
-                        // ВАЖНО: если в DTO brand/model/config уже нормализованы — ок.
-                        // Если нет — mapper сам нормализует.
                         $this->vehicleExternalConfigMapper->mapOne(
                             brandName: $brandDto->name,
                             modelName: $modelDto->name,
@@ -115,8 +123,6 @@ final class VehicleSyncService
                             continue;
                         }
 
-                        // ВАЖНО: если в DTO brand/model/config уже нормализованы — ок.
-                        // Если нет — mapper сам нормализует.
                         $this->vehicleExternalConfigMapper->mapOne(
                             brandName: $brandDto->name,
                             modelName: $modelDto->name,
@@ -162,15 +168,12 @@ final class VehicleSyncService
                             continue;
                         }
 
-                        // ВАЖНО: если в DTO brand/model/config уже нормализованы — ок.
-                        // Если нет — mapper сам нормализует.
                         $this->vehicleExternalConfigMapper->mapOne(
                             brandName: $brandDto->name,
                             modelName: $modelDto->name,
                             configName: $cfgDto->name,
                             companyId: $cfgDto->companyId,
                             apiId: $cfgDto->externalId,
-                        //  meta: $cfgDto->meta ?? [],
                         );
 
                         $stats['linked']++;

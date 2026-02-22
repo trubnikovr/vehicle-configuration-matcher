@@ -13,11 +13,14 @@ use App\Services\Vehicles\DTO\VehicleConfigDTO;
 
 final class KapitalVehicleCatalogProvider implements VehicleCatalogProvider
 {
-    public const COMPANY_ID = 2; // поставь реальный companyId Kapital
 
     public function __construct(
         private readonly KapitalInsuranceService $kapitalInsuranceService,
     ) {}
+    function key():int
+    {
+        return 2;
+    }
 
     public function fetchCatalog(): VehicleCatalogDTO
     {
@@ -48,7 +51,7 @@ final class KapitalVehicleCatalogProvider implements VehicleCatalogProvider
                     new VehicleConfigDTO(
                         name: $modelName,
                         externalId: (string) $modelId, // externalId = id модели у Kapital
-                        companyId: self::COMPANY_ID,
+                        companyId: $this->key(),
                         price: null,
                         meta: [
                             'kapital_brand_id' => $brandId,
