@@ -15,3 +15,10 @@ This is NOT a full Laravel application.
 
 Only core domain logic is included for demonstration purposes.
 Code is extracted and simplified from a production system.
+
+use this
+$this->app->tag([
+   NeoVehicleCatalogProvider::class,
+   KapitalVehicleCatalogProvider::class,
+   InsonVehicleCatalogProvider::class,
+], 'vehicle.providers');
